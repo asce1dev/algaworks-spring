@@ -8,13 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.algaworks.algafood.domain.filter.VendaDiariaFilter;
 import com.algaworks.algafood.domain.service.VendaQueryService;
+import com.algaworks.algafood.domain.service.VendaReportService;
 
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
-public class PdfVendaReportService {
+public class PdfVendaReportService implements VendaReportService {
 
 	@Autowired
 	private VendaQueryService vendaQueryService;
