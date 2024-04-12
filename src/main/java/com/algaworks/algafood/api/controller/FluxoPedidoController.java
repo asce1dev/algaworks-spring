@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algaworks.algafood.domain.service.FluxoPedidoService;
 
 @RestController
-@RequestMapping(value = "/pedidos/{pedidoId}")
+@RequestMapping(value = "/pedidos/{codigoPedido}")
 public class FluxoPedidoController {
 
 	@Autowired
@@ -31,7 +31,8 @@ public class FluxoPedidoController {
 	
 	@PutMapping("/entrega")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void entregar(String codigoPedido) {
+	public void entregar(@PathVariable String codigoPedido) {
 		fluxoPedido.entregar(codigoPedido);
 	}
+	
 }
