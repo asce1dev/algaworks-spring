@@ -1,9 +1,10 @@
 package com.algaworks.algafood.api.model.input;
 
-import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,10 +12,11 @@ import lombok.Setter;
 @Getter
 public class CidadeInput {
 
+	@ApiModelProperty(example = "Uberlândia", required = true)
 	@NotBlank
 	private String nome;
 	
 	@Valid
-	@ManyToOne
+	@NotNull
 	private EstadoIdInput estado;
 }
