@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
@@ -33,7 +32,6 @@ public class CadastroRestauranteIT {
 	
 	private static final int RESTAURANTE_ID_INEXISTENTE = 100;
 	
-	@LocalServerPort
 	private int port;
 	
 	@Autowired

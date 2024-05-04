@@ -1,5 +1,6 @@
 package com.algaworks.algafood.core.openapi;
 
+import java.awt.print.Pageable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -7,10 +8,17 @@ import java.util.function.Consumer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.context.request.ServletWebRequest;
 
+import com.algaworks.algafood.api.exceptionhandler.Problem;
+import com.algaworks.algafood.api.model.PedidoResumoModel;
+import com.algaworks.algafood.api.openapi.model.PageableModelOpenApi;
+import com.algaworks.algafood.api.openapi.model.PedidosResumoModelOpenApi;
+import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
@@ -19,6 +27,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RepresentationBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseBuilder;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.service.Response;
@@ -33,6 +42,8 @@ public class SpringFoxConfig {
 
 	@Bean
 	public Docket apiDocket() {
+		var typeResolver = new TypeResolver();
+		
 		return new Docket(DocumentationType.OAS_30)
 				.select()
 					.apis(RequestHandlerSelectors.basePackage("com.algaworks.algafood.api"))
@@ -43,8 +54,20 @@ public class SpringFoxConfig {
 				.globalResponses(HttpMethod.POST, globalPostPutResponseMessages())
 				.globalResponses(HttpMethod.PUT, globalPostPutResponseMessages())
 				.globalResponses(HttpMethod.DELETE, globalDeleteResponseMessages())
+				.additionalModels(typeResolver.resolve(Problem.class))
+				.ignoredParameterTypes(ServletWebRequest.class)
+				.directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(Page.class, PedidoResumoModel.class),
+						PedidosResumoModelOpenApi.class))
 				.apiInfo(apiInfo())
-				.tags(new Tag("Cidades", "Gerencia as cidades"));
+				.tags(new Tag("Cidades", "Gerencia as cidades"),
+						new Tag("Grupos", "Gerencia os grupos de usuários"),
+						new Tag("Cozinhas", "Gerencia as cozinhas"),
+						new Tag("Formas de Pagamento", "Gerencia as formas de pagamentos"),
+						new Tag("Pedidos", "Gerencia os Pedidos"),
+						new Tag("Restaurantes", "Gerencia os restaurantes"),
+						new Tag("Estados", "Gerencia os Estados"));
 	}
 	
 	@Bean
@@ -84,8 +107,6 @@ public class SpringFoxConfig {
 				new ResponseBuilder()
 					.code(String.valueOf(HttpStatus.NOT_ACCEPTABLE.value()))
 					.description("Recurso não possui representação que poderia ser aceita pelo consumidor")
-					.representation(MediaType.APPLICATION_JSON)
-					.apply(getProblemaModelReference())
 					.build(),
 				new ResponseBuilder()
 					.code(String.valueOf(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value()))
